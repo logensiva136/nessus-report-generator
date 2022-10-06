@@ -4,15 +4,14 @@ const fileDownload = require("js-file-download");
 const fs = require("fs");
 
 const api = axios.create({
-  baseURL: "https://192.168.100.24:8834/",
+  baseURL: process.env.IP + ":8834/",
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
   headers: {
     Accept: "application/json",
     "Content-type": "application/json",
-    "X-ApiKeys":
-      "accessKey=69b355f439f0a81f216e72ec79fd5009c21822e9506e9228ec62d875790defce;secretKey=3a811d99586e8036cdd4d9f8834bae782b798c3297005cc6cd6aeb9c2552853e;",
+    "X-ApiKeys": process.env.ACCESSKEY + ";" + process.env.SECRETKEY,
   },
 });
 

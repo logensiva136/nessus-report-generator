@@ -1,4 +1,5 @@
 require("events").EventEmitter.defaultMaxListeners = 5;
+require("dotenv").config();
 const app = require("express")();
 const axios = require("axios");
 const fs = require("fs");
