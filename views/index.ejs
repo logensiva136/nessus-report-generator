@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Reports</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <style>
+        .tbl {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container m-auto">
+        <h2 class="text-center">Export Nessus Result as CSV</h2>
+        <hr>
+        <div class="">
+            <div class="">
+                <p>Select the folder</p>
+                <select class="dropdown" name="" id="">
+                    <option value="">----</option>
+                    <% folder.map((data)=>{%>
+                        <option value="<%=data.id%>" <%=data.id===fId ? "selected" : "" %>>
+                            <%= data.name %>
+                        </option>
+                        <% })%>
+                </select>
+            </div>
+        </div>
+        <hr>
+        <% if(home) { %>
+            <div class="text-center">
+                <h3>Please select the folder</h3>
+            </div>
+            <%}else{%>
+                <p>Total Scan Results : <%= scans.length %>
+                </p>
+                <hr>
+                <div class="row">
+                    <div class="col-8 ">Name</div>
+                    <div class="col-2 text-center">Status</div>
+                    <div class="col-2 text-center">Action</div>
+                </div>
+                <hr>
+                <% if(scans.length>0 ) {%>
+                    <% scans.map(data=>{ %>
+                        <form action="/download" method="post">
+                            <div class="tbl row">
+                                <input type="hidden" name="id" value="<%= data.id %>">
+                                <div class="col-8">
+                                    <%= data.name %>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <%= data.status %>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <button class="btn btn-outline-primary" type="submit">Download</button>
+                                </div>
+                            </div>
+                        </form>
+                        <% }) }else{ %>
+                            <div class="text-center">
+                                <h3>The folder is empty</h3>
+                            </div>
+                            <% }} %>
+    </div>
+
+    <script>
+
+        $(document).on('change', '.dropdown', function () {
+            if ($(".dropdown option:selected").text() === "----") {
+                window.location.replace("/")
+            } else {
+                window.location.replace("/selected/" + $(".dropdown option:selected").val())
+            }
+
+        });
+    </script>
+</body>
+
+</html>
