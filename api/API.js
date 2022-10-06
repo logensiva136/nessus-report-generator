@@ -11,39 +11,30 @@ const api = axios.create({
   headers: {
     Accept: "application/json",
     "Content-type": "application/json",
-    "X-ApiKeys": process.env.ACCESSKEY + ";" + process.env.SECRETKEY,
+    "X-ApiKeys":
+      "accessKey=" +
+      process.env.ACCESSKEY +
+      ";secretKey=" +
+      process.env.SECRETKEY,
   },
 });
 
 exports.getFolders = async () => {
-  return await api({
+  const result = await api({
     method: "GET",
     url: `/folders`,
-  })
-    .then((data) => {
-      // console.log(data.length);
-      return data.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+
+  return result.data;
 };
 
 exports.getScansResults = async (folderId) => {
-  // console.log(typeof +folderId);
-  return await api({
+  const scans = await api({
     method: "GET",
     url: `scans?folder_id=${folderId}`,
-    // data: {
-    //   folder_id: +folderId,
-    // },
-  })
-    .then((data) => {
-      return data.data.scans;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+
+  return scans.data.scans;
 };
 
 exports.download = async (id, fn) => {
@@ -56,27 +47,18 @@ exports.download = async (id, fn) => {
     data: {
       format: "csv",
     },
-  })
-    .then((data) => {
-      return data.data.file;
-    })
-    .catch((err) => console.log(err));
+  });
 
-  // console.log(genFId);
-  return await api({
+  const result = await api({
     method: "GET",
-    url: `scans/${id}/export/${genFId}/download`,
+    url: `scans/${id}/export/${genFId.data.file}/download`,
     headers: {
       accept: "application/octet-stream",
     },
-  })
-    .then(async (data) => {
-      return {
-        name: await data.headers["content-disposition"].split('"')[1],
-        data: await data.data,
-      };
-    })
-    .catch((err) => console.log(err));
+  });
 
-  // accept: application/octet-stream
+  return {
+    name: await result.headers["content-disposition"].split('"')[1],
+    data: await result.data,
+  };
 };
