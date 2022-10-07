@@ -23,6 +23,8 @@ exports.getFolders = async () => {
   const result = await api({
     method: "GET",
     url: `/folders`,
+  }).catch((err) => {
+    console.log(err);
   });
 
   return result.data;
@@ -32,6 +34,8 @@ exports.getScansResults = async (folderId) => {
   const scans = await api({
     method: "GET",
     url: `scans?folder_id=${folderId}`,
+  }).catch((err) => {
+    console.log(err);
   });
 
   return scans.data.scans;
@@ -46,8 +50,55 @@ exports.download = async (id, fn) => {
     },
     data: {
       format: "csv",
+      template_id: "",
+      reportContents: {
+        csvColumns: {
+          id: true,
+          cve: true,
+          cvss: true,
+          risk: true,
+          hostname: true,
+          protocol: true,
+          port: true,
+          plugin_name: true,
+          synopsis: true,
+          description: true,
+          solution: true,
+          see_also: true,
+          plugin_output: true,
+          stig_severity: true,
+          cvss3_base_score: true,
+          cvss_temporal_score: true,
+          cvss3_temporal_score: true,
+          risk_factor: true,
+          references: true,
+          plugin_information: true,
+          exploitable_with: true,
+        },
+      },
+      extraFilters: { host_ids: [], plugin_ids: [] },
     },
+  }).catch((err) => {
+    console.log(err);
   });
+  // console.log(genFId.data);
+  // setTimeout(() => {}, 500);
+
+  while (true) {
+    const status = await api({
+      method: "GET",
+      url: `scans/${id}/export/${genFId.data.file}/status`,
+      headers: {
+        accept: "application/json",
+      },
+    });
+    if (status.data.status !== "ready") {
+      {
+      }
+    } else {
+      break;
+    }
+  }
 
   const result = await api({
     method: "GET",
@@ -55,6 +106,8 @@ exports.download = async (id, fn) => {
     headers: {
       accept: "application/octet-stream",
     },
+  }).catch((err) => {
+    console.log(err);
   });
 
   return {
